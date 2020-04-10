@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tuto Leaflet</title>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+   crossorigin=""/>
+   <!-- Make sure you put this AFTER Leaflet's CSS -->
+   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+   crossorigin=""></script>
+
+</head>
+<body>
+	<h1>Tutoriel Leaflet</h1>
+
+	<div id="mapid" style="width: 640px; height: 480px;"></div>
+
+	<script>
+		//attendre chargement de la page
+		window.onload = function(){
+
+			console.log('Page chargée');
+			var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+			/*
+			var tileStreets=L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+			    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+			    maxZoom: 18,
+			    id: 'mapbox/streets',
+			    tileSize: 512,
+			    zoomOffset: -1,
+			    accessToken: 'pk.eyJ1IjoicmVtaTUwIiwiYSI6ImNrOHR4MmJrZzAxZXMzZW8wb2x3NWx3dXUifQ.UlF_2jwpW1hjU3T259w9jQ'
+				});
+
+		tileStreets.addTo(mymap);
+		*/
+
+		}
+		
+	</script>
+
+
+</body>
+</html>
