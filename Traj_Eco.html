@@ -4,6 +4,8 @@
 	<meta charset="utf-8" />
     <link rel="stylesheet" href="Traj_Eco.css" />
 	<title>Traj'Eco</title>
+	<script type="text/javascript" src="train.js"></script>
+	<script type="text/javascript" src="test.js"></script>
 </head>
 <body >
 	<header>
@@ -17,6 +19,42 @@
 	<section>
 		<div id="creer_fiche">
 			<h2>Veuillez remplir vos informations de trajet</h2>
+			<form name="loc">
+				<p>
+				Moyen de locomotion :</br>
+					 <input type="checkbox" name="voiture" id="voiture" /><label for="voiture">voiture</label></br>
+					 <input type="checkbox" name="avion" id="avion" /><label for="avion">avion</label></br>
+					 <input type="checkbox" name="train" id="train" /><label for="train">train</label></br>
+					 <input type="checkbox" name="bus" id="bus" /><label for="bus">bus</label></br>
+				</p>
+			</form>
+			<form name="depart">
+				<p>
+					<label for="depart">Lieu de départ</label> :<input type="text" name="depart" id="depart" />
+				</p>
+			</form>
+
+			<form>
+				<p>
+					<label for="arrivee">Lieu d'arrivée</label> :<input type="text" name="arrivee" id="arrivee" />
+				</p>
+			</form>
+			<form>
+				<p>
+					<label for="nb_passagers">Nombre de passagers</label> :<input type="number" name="nb_passagers" id="nb_passagers" />
+				</p>
+			</form>
+			<form>
+				<p>
+					<label for="date">Date de départ</label> :<input type="date" name="date" id="date"  />
+				</p>
+			</form>
+			<form>
+				<p>
+					<label for="heure">Heure de départ</label> :<input type="time" name="heure" id="heure"  />
+				</p>
+			</form>
+				<input type="button" value="Envoyer" onclick="send_t()" />
 		</div>
 	</section>
 	<footer>
@@ -24,7 +62,7 @@
 			Contact
 			<ul>
 				<li>r7chevri@enib.fr</li>
-				<li>y5bayol@enib.fr</li>
+				<li>y6bayol@enib.fr</li>
 				<li>r7chevri@enib.fr</li>
 			</ul>
 		</div>
