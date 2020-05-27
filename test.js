@@ -1,3 +1,4 @@
+
 //API
 
 
@@ -109,27 +110,28 @@ function initControl(wp)
 	})
 	routingControl.addEventListener('routeselected', function(e) {
       var route = e.route;
-      alert('latlong:\n' + JSON.stringify(route.waypoints, null,2));
+      //alert('latlong:\n' + JSON.stringify(route.waypoints, null,2));
       jsonString=JSON.stringify(route.waypoints, null,2);
       console.log(jsonString);
 
       jsonObj = JSON.parse(jsonString);
-      alert(jsonObj[0]["latLng"]["lat"]);
+      //alert(jsonObj[0]["latLng"]["lat"]);
 
 
       let latdepart = jsonObj[0]["latLng"]["lat"];
-      console.log("La lat de départ est : " + latdepart);
+      //console.log("La lat de départ est : " + latdepart);
       let lngdepart = jsonObj[0]["latLng"]["lng"];
       console.log("La lng de départ est : " + lngdepart);
 
       let latfin = jsonObj[1]["latLng"]["lat"];
-      console.log("La lat de fin est : " + latfin);
+      //console.log("La lat de fin est : " + latfin);
       let lngfin = jsonObj[1]["latLng"]["lng"];
-      console.log("La lng de fin est : " + lngfin);
-
-      start = L.latLng(latdepart, lngdepart);
-      end = L.latLng(latfin, lngfin);
-      getDistance(start, end);
+      //console.log("La lng de fin est : " + lngfin);
+      console.log(start+end)
+      start_oiseau = L.latLng(latdepart, lngdepart);
+      end_oiseau = L.latLng(latfin, lngfin);
+      console.log("apres" +start+end)
+      getDistance(start_oiseau, end_oiseau);
 
     })
     
@@ -178,27 +180,28 @@ function Donnees(donnees) {				//Le constructeur reçoit un tableau des donnees 
 //Méthodes de l'objet prototype de Donnees
 Donnees.prototype.calculApiKilometrage=function(distance){
 	console.log("nombre de kilomètres : "+Math.round(distance));
+	this.distance=Math.round(distance);
 };
-Donnees.prototype.calculApiHArrivee=function(heure_depart,temps_trajet)
+Donnees.prototype.calculApiHArrivee=function(temps_trajet)
 {
 	let heure_arrivee="";//initialisation des variables pour convertir l'heure de départ et d'arrivée
 	let minutes_arrivee="";
 	let m=false;
 	let nbrheures=0;
 
-	for (var i=0; i< heure_depart.length; i++) 
+	for (var i=0; i< this.heure.length; i++) 
 	{
 		if(m)
 		{
-			minutes_arrivee+=heure_depart[i]
+			minutes_arrivee+=this.heure[i]
 		}			
-		if(heure_depart[i]==":")
+		if(this.heure[i]==":")
 		{
 			m=true
 		}
 		if(!m)
 		{
-			heure_arrivee+=heure_depart[i];
+			heure_arrivee+=this.heure[i];
 		}
 	}
     heure_arrivee=Number(heure_arrivee);
@@ -209,14 +212,76 @@ Donnees.prototype.calculApiHArrivee=function(heure_depart,temps_trajet)
      		nbrheures=Math.trunc(minutes_arrivee/60);
      		minutes_arrivee-=nbrheures*60;
    	}
+   	if(heure_arrivee>24)
+   	{
+   		let nbjours = Math.tronc(heure_arrivee/24);
+   		//finir la réalisation de la date
+   	}
    	heure_arrivee+=nbrheures+temps_trajet[0]
+   	this.heure_arrivee=heure_arrivee;
+   	this.minutes_arrivee=minutes_arrivee;
 	console.log("Votre temps de trajet est de : "+temps_trajet[0]+"h"+temps_trajet[1]+" et l'heure d'arrivee :"+heure_arrivee+"h"+minutes_arrivee);
 };
-Donnees.prototype.cout=function(){
-	console.log("Le coût du trajet est de :");
+Donnees.prototype.cout=function(distance)
+{
+	var voiture=0.27//prix en moyenne du kilomètre en voiture 
+	var avion=0.11//longue distance
+	var train=0.16//myenne et longue distance
+	var bus=0.10//moyenne et longue distance
+	var cout=0;
+	switch(this.moyen_loc)
+	{
+		case "voiture" :
+			var nbvoitures=Math.trunc(this.nombre_personnes/5)
+			var reste=this.nombre_personnes-nbvoitures*5;
+			console.log(reste)
+			cout+=this.distance*voiture*nbvoitures;
+			if(reste<=5){
+				cout+= this.distance*voiture;
+			}
+			else{
+				alert("error reste >5")
+			}
+		case "avion" :
+			cout= this.distance*avion*this.nombre_personnes;
+		case "train" :
+			cout= this.distance*train*this.nombre_personnes;
+		case "bus" :
+			cout= this.distance*bus*this.nombre_personnes;
+	}
+	this.cout=cout;
+	console.log("Le coût du trajet est de :"+ this.cout);
 };
-Donnees.prototype.calculApiCarbon=function(){
-	console.log("L'empreinte carbone de votre trajet :");
+Donnees.prototype.calculApiCarbon=function(distance,nbpersonnes,moyen_loc){
+	var voiture=285//empreinte carbone en moyenne pour une voiture voiture de 5 places par kilommètre 
+	var avion=122//longue distance
+	var train=15//myenne et longue distance
+	var bus=68//moyenne et longue distance
+	var empreinte=0;
+	switch(moyen_loc)
+	{
+		case "voiture" :
+			var nbvoitures=Math.trunc(nbpersonnes/5)
+			var reste=nbpersonnes-nbvoitures*5;
+			if(reste!=0){
+				nbvoitures+= 1;
+			}
+			empreinte+=nbvoitures*voiture*distance
+		case "avion" :
+			empreinte= distance*avion*nbpersonnes;
+		case "train" :
+			empreinte= distance*train*nbpersonnes;
+		case "bus" :
+			empreinte= distance*bus*nbpersonnes;
+	}
+	if(empreinte>1000){
+		empreinte=Math.round(empreinte/1000);
+		console.log("L'empreinte carbone de votre trajet :"+empreinte+" kilogrammes");
+	}
+	else{
+		console.log("L'empreinte carbone de votre trajet :"+empreinte+" grammes");
+	}
+	
 }
 
 //fin implémentation Donnees
@@ -256,6 +321,7 @@ function send_t()
 			alert("Veuillez entrer une ville d'arrivee")
 			return 0;
 		}
+		console.log("donnee"+start+end)
 		donnee_entree[0]=start;
 		donnee_entree[1]=end;
 		donnee_entree[2]=document.getElementById("nb_passagers");
@@ -278,7 +344,11 @@ function send_t()
 				donnee_traitee.push(donnee_loc[i].name);
 			}
 		}
-		for (let i=0;i<donnee_entree.length;i++){
+		for(let i=0;i<2;i++)
+		{
+			donnee_traitee.push(donnee_entree[i]);
+		}
+		for (let i=2;i<donnee_entree.length;i++){
 				donnee_traitee.push(donnee_entree[i].value);
 			}
         
@@ -286,10 +356,72 @@ function send_t()
         {
         	alert("Veuillez entrer une destination");
         }
-
+        console.log(donnee_traitee)
         var donnee = new Donnees(donnee_traitee);
 		donnee.calculApiKilometrage(distance);//distance
 		temps_trajet=[time_heures,time_minutes];//temps du trajet récupéré de l'api
-		donnee.calculApiHArrivee(donnee.heure,temps_trajet);
+		donnee.calculApiHArrivee(donnee.heure,temps_trajet);//Determiner le jour et l'heure d'arrivée
+		donnee.cout(donnee.distance,donnee.moyen_loc)
+		donnee.calculApiCarbon(donnee.distance,donnee.nombre_personnes,donnee.moyen_loc)
+		console.log(donnee)
 }
+
+function Test(donnees) {        //Le constructeur reçoit un tableau des donnees à traiter en entrée
+  this.moyen_loc=donnees[0];
+  this.depart=donnees[1];
+  this.arrivee = donnees[2] ;
+  this.nombre_personnes=donnees[3];
+  this.date=donnees[4];
+  this.heure=donnees[5];
+  this.distance=donnees[6];
+  this.cout=20;
+  this.carbon=3;
+}
+var donnee= ["voiture","Brest","Rennes",8,"20/04/2000","20:45",200];
+var nouvelle= new Test(donnee);
+
+function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Vehicule', 'Coût', 'Empreinte Carbone', 'Temps'],
+    [nouvelle.moyen_loc, nouvelle.cout, nouvelle.carbon, nouvelle.heure],
+    ["avion", 10, 100, nouvelle.heure],
+    ["bus", 20, nouvelle.carbon, nouvelle.heure],
+    ["train", 50, nouvelle.carbon, nouvelle.heure]
+  ]);
+  var options = {
+    chart: {
+      title: 'Company Performance',
+      subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+    },
+    bars: 'horizontal' // Required for Material Bar Charts.
+  };
+  var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+  chart.draw(data, google.charts.Bar.convertOptions(options));
+}
+google.charts.load('current', {'packages':['bar']});
+google.charts.setOnLoadCallback(drawChart);
+
+
+
+
+
+/*function drawChart() {
+  var data = google.visualization.arrayToDataTable([
+    ['Vehicule', 'Coût', 'Empreinte Carbone', 'Temps'],
+    [nouvelle.moyen_loc, nouvelle.cout, nouvelle.carbon, nouvelle.heure],
+    ["avion", 10, 100, nouvelle.heure],
+    ["bus", 20, nouvelle.carbon, nouvelle.heure],
+    ["train", 50, nouvelle.carbon, nouvelle.heure]
+  ]);
+  var options = {
+    chart: {
+      title: 'Bilan du trajet',
+      subtitle: 'Sales, Expenses, and Profit: 2014-2017',
+    },
+    bars: 'horizontal' // Required for Material Bar Charts.
+  };
+  var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+  chart.draw(data, google.charts.Bar.convertOptions(options));
+}
+*/
 
