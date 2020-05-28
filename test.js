@@ -34,7 +34,7 @@ for(var i = 0; i < points.length; i++)
 {
   	appelAjax(points[i]).done(function (response) 
   	{
-    	console.log("test");
+    	//console.log("test");
     	if(response != "")
     	{
     	
@@ -127,19 +127,19 @@ function initControl(wp)
       //console.log("La lat de fin est : " + latfin);
       let lngfin = jsonObj[1]["latLng"]["lng"];
       //console.log("La lng de fin est : " + lngfin);
-      console.log(start+end)
+     // console.log(start+end)
       start_oiseau = L.latLng(latdepart, lngdepart);
       end_oiseau = L.latLng(latfin, lngfin);
-      console.log("apres" +start+end)
-      getDistance(start_oiseau, end_oiseau);
+      //console.log("apres" +start+end)
+      distance_avion=getDistance(start_oiseau, end_oiseau);
 
     })
     
 
 
 function getDistance(from, to){
-    //var container = document.getElementById('distance');
-    alert("vol d'oiseau " + (from.distanceTo(to)).toFixed(0)/1000) + ' km';
+    
+    return (from.distanceTo(to)).toFixed(0)/1000;
 
 
     }
@@ -170,10 +170,10 @@ window.onload = function()
 //Donnees
 //Constructeur de l'objet Donnees
 function Donnees(donnees) {				//Le constructeur reçoit un tableau des donnees à traiter en entrée
-	this.moyen_loc=donnees[0];
+	this.moyen_locomotion=donnees[0];
 	this.depart=donnees[1];
 	this.arrivee = donnees[2] ;
-	this.nombre_personnes=donnees[3];
+	this.nombre_personnes=Number(donnees[3]);
 	this.date=donnees[4];
 	this.heure=donnees[5];
 }
@@ -188,8 +188,25 @@ Donnees.prototype.calculApiHArrivee=function(temps_trajet)
 	let minutes_arrivee="";
 	let m=false;
 	let nbrheures=0;
-
-	for (var i=0; i< this.heure.length; i++) 
+	let vitesse_moyenne_avion = 900;//km/h
+	let vitesse_moyenne_train= 240;//moyenne entre le tgv et le ter
+	let vitesse_moyenne_bus=80;
+	switch(this.moyen_locomotion)
+	{
+		case "avion" :
+			temps_trajet[0]= Math.trunc(this.distance/vitesse_moyenne_avion) ;//malus de 40min
+			temps_trajet[1]=40+((this.distance/vitesse_moyenne_avion)-temps_trajet[0])*60;
+			break;
+		case "train" :
+			temps_trajet[0]= Math.trunc(this.distance/vitesse_moyenne_train+0.16);//malus de 10min
+			temps_trajet[1]=10+((this.distance/vitesse_moyenne_train)-temps_trajet[0])*60;
+			break;
+		case "bus" :
+			temps_trajet[0]= Math.trunc(this.distance/vitesse_moyenne_bus);
+			temps_trajet[1]=0+((this.distance/vitesse_moyenne_bus)-temps_trajet[0])*60;
+			break;
+	}
+	for (var i=0; i<this.heure.length; i++) 
 	{
 		if(m)
 		{
@@ -206,82 +223,101 @@ Donnees.prototype.calculApiHArrivee=function(temps_trajet)
 	}
     heure_arrivee=Number(heure_arrivee);
    	minutes_arrivee=Number(minutes_arrivee);
-   	minutes_arrivee+=temps_trajet[1];
+   	//console.log("heure "+heure_arrivee+" minutes_arrivee "+minutes_arrivee)
+   	minutes_arrivee+=Number(temps_trajet[1]);
+   	//console.log("heure "+minutes_arrivee)
    	if(minutes_arrivee>60)
    	{
-     		nbrheures=Math.trunc(minutes_arrivee/60);
-     		minutes_arrivee-=nbrheures*60;
+     	nbrheures=Math.trunc(minutes_arrivee/60);
+     	minutes_arrivee-=nbrheures*60;
+
    	}
    	if(heure_arrivee>24)
    	{
-   		let nbjours = Math.tronc(heure_arrivee/24);
+   		let nbjours = Math.trunc(heure_arrivee/24);
    		//finir la réalisation de la date
    	}
-   	heure_arrivee+=nbrheures+temps_trajet[0]
+   	heure_arrivee+=Number(nbrheures+temps_trajet[0])
+   	//console.log("heure fin "+heure_arrivee+ " "+ nbrheures+" "+temps_trajet[0])
    	this.heure_arrivee=heure_arrivee;
    	this.minutes_arrivee=minutes_arrivee;
-	console.log("Votre temps de trajet est de : "+temps_trajet[0]+"h"+temps_trajet[1]+" et l'heure d'arrivee :"+heure_arrivee+"h"+minutes_arrivee);
+   	this.temps_trajet=(temps_trajet[0]).toString()+"h"+(temps_trajet[1]).toString()
+	console.log("Votre temps de trajet est de : "+this.temps_trajet+" et l'heure d'arrivee :"+this.heure_arrivee+"h"+this.minutes_arrivee);
 };
-Donnees.prototype.cout=function(distance)
+Donnees.prototype.cout=function()
 {
 	var voiture=0.27//prix en moyenne du kilomètre en voiture 
 	var avion=0.11//longue distance
 	var train=0.16//myenne et longue distance
 	var bus=0.10//moyenne et longue distance
 	var cout=0;
-	switch(this.moyen_loc)
+	switch(this.moyen_locomotion)
 	{
 		case "voiture" :
 			var nbvoitures=Math.trunc(this.nombre_personnes/5)
 			var reste=this.nombre_personnes-nbvoitures*5;
-			console.log(reste)
 			cout+=this.distance*voiture*nbvoitures;
-			if(reste<=5){
+			if(reste<=5)
+			{
 				cout+= this.distance*voiture;
+
 			}
 			else{
 				alert("error reste >5")
 			}
+			break;
 		case "avion" :
 			cout= this.distance*avion*this.nombre_personnes;
+			break;
 		case "train" :
 			cout= this.distance*train*this.nombre_personnes;
+			break;
 		case "bus" :
 			cout= this.distance*bus*this.nombre_personnes;
+			break;
 	}
+	//console.log(cout)
 	this.cout=cout;
 	console.log("Le coût du trajet est de :"+ this.cout);
 };
-Donnees.prototype.calculApiCarbon=function(distance,nbpersonnes,moyen_loc){
+Donnees.prototype.calculApiCarbon=function(){
 	var voiture=285//empreinte carbone en moyenne pour une voiture voiture de 5 places par kilommètre 
 	var avion=122//longue distance
 	var train=15//myenne et longue distance
 	var bus=68//moyenne et longue distance
 	var empreinte=0;
-	switch(moyen_loc)
+	//console.log("empreinte",moyen_loc)
+	switch(this.moyen_locomotion)
 	{
 		case "voiture" :
-			var nbvoitures=Math.trunc(nbpersonnes/5)
-			var reste=nbpersonnes-nbvoitures*5;
+			var nbvoitures=Math.trunc(this.nombre_personnes/5)
+			var reste=this.nombre_personnes-nbvoitures*5;
 			if(reste!=0){
 				nbvoitures+= 1;
 			}
-			empreinte+=nbvoitures*voiture*distance
+			//console.log("nbvoitures"+nbvoitures+" "+reste)
+			empreinte+=nbvoitures*voiture*this.distance
+			break;
 		case "avion" :
-			empreinte= distance*avion*nbpersonnes;
+			empreinte= this.distance*avion*this.nombre_personnes;
+			break;
 		case "train" :
-			empreinte= distance*train*nbpersonnes;
+			empreinte= this.distance*train*this.nombre_personnes;
+			break;
 		case "bus" :
-			empreinte= distance*bus*nbpersonnes;
+			empreinte= this.distance*bus*this.nombre_personnes;
+			break;
 	}
+	//console.log("empreinte",empreinte)
 	if(empreinte>1000){
 		empreinte=Math.round(empreinte/1000);
+
 		console.log("L'empreinte carbone de votre trajet :"+empreinte+" kilogrammes");
 	}
 	else{
 		console.log("L'empreinte carbone de votre trajet :"+empreinte+" grammes");
 	}
-	
+	this.empreinte=empreinte;
 }
 
 //fin implémentation Donnees
@@ -298,8 +334,11 @@ function Texte(police,couleur,texte,taille_police,typet){
 //Texte
 //Diagramme
 function Diagram(donnees,type_diag){
-	this.donnees=donnees;
-	this.type_diag=type_diag;
+	moyen_locomotion=donnees[0];
+	cout=donnees[1];
+	empreinte=donnees[2];
+	temps=donnes[3];
+	type=type_diag;
 }
 //Diagramme
 
@@ -307,12 +346,12 @@ function Diagram(donnees,type_diag){
 
 function send_t()
 {
-		let donnee_entree= new Array();
-		let donnee_loc = new Array();
-		donnee_loc[0]=document.getElementById("voiture");
-		donnee_loc[1]=document.getElementById("avion");
-		donnee_loc[2]=document.getElementById("train");
-		donnee_loc[3]=document.getElementById("bus");
+		let donnee_entree_utilisateur= new Array();
+		let donnee_locomotion = new Array();
+		donnee_locomotion[0]=document.getElementById("voiture");
+		donnee_locomotion[1]=document.getElementById("avion");
+		donnee_locomotion[2]=document.getElementById("train");
+		donnee_locomotion[3]=document.getElementById("bus");
 		if(!start){
 			alert("Veuillez entrer une ville de départ")
 			return 0;
@@ -321,72 +360,90 @@ function send_t()
 			alert("Veuillez entrer une ville d'arrivee")
 			return 0;
 		}
-		console.log("donnee"+start+end)
-		donnee_entree[0]=start;
-		donnee_entree[1]=end;
-		donnee_entree[2]=document.getElementById("nb_passagers");
-		donnee_entree[3]=document.getElementById("date");
-		donnee_entree[4]=document.getElementById("heure");
+		//console.log("donnee"+start+end)
+		donnee_entree_utilisateur[0]=start; //à changer si on fait vol d'oiseau
+		donnee_entree_utilisateur[1]=end;
+		donnee_entree_utilisateur[2]=document.getElementById("nb_passagers");
+		donnee_entree_utilisateur[3]=document.getElementById("date");
+		donnee_entree_utilisateur[4]=document.getElementById("heure");
 		
-		if(!donnee_loc[0].checked && !donnee_loc[1].checked && !donnee_loc[2].checked && !donnee_loc[3].checked){
-			alert("Aucun moyen de locomotion n'est sélectionné");
+		if(!donnee_locomotion[0].checked && !donnee_locomotion[1].checked && !donnee_locomotion[2].checked && !donnee_locomotion[3].checked){
+			alert("Aucun moyen de locomotionomotion n'est sélectionné");
 			return 0;
 		}
-		for (let i=2;i<donnee_entree.length;i++){
-			if(!donnee_entree[i].value){
-				alert("Vous n'avez pas rentré votre "+donnee_entree[i].name);
+		for (let i=2;i<donnee_entree_utilisateur.length;i++){
+			if(!donnee_entree_utilisateur[i].value){
+				alert("Vous n'avez pas rentré votre "+donnee_entree_utilisateur[i].name);
 				return 0;
 			}
 		}
 		let donnee_traitee = new Array();
-		for (let i=0;i<donnee_loc.length;i++){
-			if(donnee_loc[i].checked){
-				donnee_traitee.push(donnee_loc[i].name);
+		for (let i=0;i<donnee_locomotion.length;i++){
+			if(donnee_locomotion[i].checked){
+				donnee_traitee.push(donnee_locomotion[i].name);
 			}
 		}
 		for(let i=0;i<2;i++)
 		{
-			donnee_traitee.push(donnee_entree[i]);
+			donnee_traitee.push(donnee_entree_utilisateur[i]);
 		}
-		for (let i=2;i<donnee_entree.length;i++){
-				donnee_traitee.push(donnee_entree[i].value);
+		for (let i=2;i<donnee_entree_utilisateur.length;i++){
+				donnee_traitee.push(donnee_entree_utilisateur[i].value);
 			}
         
         if(!distance)
         {
         	alert("Veuillez entrer une destination");
         }
-        console.log(donnee_traitee)
-        var donnee = new Donnees(donnee_traitee);
-		donnee.calculApiKilometrage(distance);//distance
+        //console.log(donnee_traitee)
+        //MOYEN CHOISI
+        var donnee_api = new Donnees(donnee_traitee);
+		donnee_api.calculApiKilometrage(distance);//distance
 		temps_trajet=[time_heures,time_minutes];//temps du trajet récupéré de l'api
-		donnee.calculApiHArrivee(donnee.heure,temps_trajet);//Determiner le jour et l'heure d'arrivée
-		donnee.cout(donnee.distance,donnee.moyen_loc)
-		donnee.calculApiCarbon(donnee.distance,donnee.nombre_personnes,donnee.moyen_loc)
-		console.log(donnee)
+		donnee_api.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
+		donnee_api.cout();
+		donnee_api.calculApiCarbon();
+		console.log(distance_avion)
+		//AVION
+		donnee_traitee[0]="avion";
+		donnee_avion=new Donnees(donnee_traitee);
+		donnee_avion.calculApiKilometrage(distance_avion);//distance
+		donnee_avion.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
+		donnee_avion.cout();
+		donnee_avion.calculApiCarbon();
+		//train
+		donnee_traitee[0]="train";
+		donnee_train=new Donnees(donnee_traitee);
+		donnee_train.calculApiKilometrage(distance_avion);//distance
+		donnee_train.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
+		donnee_train.cout();
+		donnee_train.calculApiCarbon();
+		//Bus
+		donnee_traitee[0]="bus";
+		donnee_bus=new Donnees(donnee_traitee);
+		donnee_bus.calculApiKilometrage(distance);//distance
+		donnee_bus.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
+		donnee_bus.cout();
+		donnee_bus.calculApiCarbon();
+		console.log(donnee_avion)
+		console.log(donnee_train)
+		console.log(donnee_bus)
+		makeDiagram(donnee_api,donnee_avion,donnee_train,donnee_bus);
+}
+//Diagramme
+google.charts.load('current', {'packages':['bar']});
+function makeDiagram(donnee_choisie,donnee_2,donnee_3,donnee_4) {        //Le constructeur reçoit un tableau des donnees à traiter en entrée
+  drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4)
 }
 
-function Test(donnees) {        //Le constructeur reçoit un tableau des donnees à traiter en entrée
-  this.moyen_loc=donnees[0];
-  this.depart=donnees[1];
-  this.arrivee = donnees[2] ;
-  this.nombre_personnes=donnees[3];
-  this.date=donnees[4];
-  this.heure=donnees[5];
-  this.distance=donnees[6];
-  this.cout=20;
-  this.carbon=3;
-}
-var donnee= ["voiture","Brest","Rennes",8,"20/04/2000","20:45",200];
-var nouvelle= new Test(donnee);
 
-function drawChart() {
+function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4) {
   var data = google.visualization.arrayToDataTable([
     ['Vehicule', 'Coût', 'Empreinte Carbone', 'Temps'],
-    [nouvelle.moyen_loc, nouvelle.cout, nouvelle.carbon, nouvelle.heure],
-    ["avion", 10, 100, nouvelle.heure],
-    ["bus", 20, nouvelle.carbon, nouvelle.heure],
-    ["train", 50, nouvelle.carbon, nouvelle.heure]
+    [donnee_choisie.moyen_locomotion, donnee_choisie.cout, donnee_choisie.empreinte, donnee_choisie.temps_trajet],
+    [donnee_2.moyen_locomotion, donnee_2.cout, donnee_2.empreinte, donnee_2.temps_trajet],
+    [donnee_3.moyen_locomotion, donnee_3.cout, donnee_3.empreinte, donnee_3.temps_trajet],
+    [donnee_4.moyen_locomotion, donnee_4.cout, donnee_4.empreinte, donnee_4.temps_trajet]
   ]);
   var options = {
     chart: {
@@ -398,30 +455,5 @@ function drawChart() {
   var chart = new google.charts.Bar(document.getElementById('barchart_material'));
   chart.draw(data, google.charts.Bar.convertOptions(options));
 }
-google.charts.load('current', {'packages':['bar']});
-google.charts.setOnLoadCallback(drawChart);
-
-
-
-
-
-/*function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-    ['Vehicule', 'Coût', 'Empreinte Carbone', 'Temps'],
-    [nouvelle.moyen_loc, nouvelle.cout, nouvelle.carbon, nouvelle.heure],
-    ["avion", 10, 100, nouvelle.heure],
-    ["bus", 20, nouvelle.carbon, nouvelle.heure],
-    ["train", 50, nouvelle.carbon, nouvelle.heure]
-  ]);
-  var options = {
-    chart: {
-      title: 'Bilan du trajet',
-      subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-    },
-    bars: 'horizontal' // Required for Material Bar Charts.
-  };
-  var chart = new google.charts.Bar(document.getElementById('barchart_material'));
-  chart.draw(data, google.charts.Bar.convertOptions(options));
-}
-*/
+//Diagramme
 
