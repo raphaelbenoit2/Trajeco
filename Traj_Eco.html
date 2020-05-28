@@ -4,10 +4,12 @@
 	<meta charset="utf-8">
 
 	
+	<!-- boutton en css -->
+	<link rel="stylesheet" type="text/css" href="ensemble_bouton.css"/>
+	<link rel="stylesheet" type="text/css" href="bouton4.css"/>
 
 	<!-- API utilisation -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 
 	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -16,7 +18,6 @@
     
 	<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
 	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-	
 
     <!-- API js script utilisation -->
 
@@ -40,16 +41,30 @@
 	
 	<script type="text/javascript" src="test.js"></script>
 	<!-- FIN Classes js -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
 
 </head>
 <body >
 	<header>
-	<h1>Traj'Eco</h1>
-		<nav>
-			<div ><a href="Traj_Eco.html" class="element">Accueil</a></div>
-			<div ><a href="consulter.html" class="element">Consulter une Fiche</a></div>
-			<div ><a href="modifier.html" class="element">Modifier une fiche</a></div>
-		</nav>
+	<div class="main-contain"></div>
+		<h1>
+			<div class="div">
+		    	<div class="flex-1">
+		    	  <a href="Traj_Eco.html" class="button btn-1">Accueil</a>
+		   		</div>
+		    	<div class="flex-1">
+		    	  <a href= "modifier.html" class="button btn-1">Modifier</a>
+		    	</div>
+		    	<div class="flex-1">
+		    	  <a href= "consulter.html" class="button btn-1">Fiches</a>
+		    	</div>
+		    	<div class="flex-1">
+		    	  <a href= "contact.html" class="button btn-1">TRAJ'ECO</a>
+		    	</div>
+  			</div>
+		</h1>
 	</header>
 
 	<section id="center">
@@ -58,11 +73,11 @@
 		</section>
 		<section id="donnees">
 			
-			<div id="creer_fiche">
+			<div id="creer_fiche" >
 				<h2>Veuillez remplir vos informations de trajet</h2>
 				<form name="loc">
 					<p>
-					Moyen de locomotion :</br>
+					<br>Moyen de locomotion :</br>
 						 <input type="checkbox" name="voiture" id="voiture" /><label for="voiture">voiture</label></br>
 						 <input type="checkbox" name="avion" id="avion" /><label for="avion">avion</label></br>
 						 <input type="checkbox" name="train" id="train" /><label for="train">train</label></br>
@@ -84,7 +99,9 @@
 						<label for="heure">Heure de départ</label> :<input type="time" name="heure" id="heure"  />
 					</p>
 				</form>
-					<input type="button" value="Envoyer" onclick="send_t()" />
+				<div class="button_container">
+					<button class="btn"><span>Envoyer !</span></button>
+				</div>
 			</div>
 		</section>
 	</section>
