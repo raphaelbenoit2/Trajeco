@@ -241,7 +241,7 @@ Donnees.prototype.calculApiHArrivee=function(temps_trajet)
    	//console.log("heure fin "+heure_arrivee+ " "+ nbrheures+" "+temps_trajet[0])
    	this.heure_arrivee=heure_arrivee;
    	this.minutes_arrivee=minutes_arrivee;
-   	this.temps_trajet=(temps_trajet[0]).toString()+"h"+(temps_trajet[1]).toString()
+   	this.temps_trajet=temps_trajet[0]+temps_trajet[1]/60
 	console.log("Votre temps de trajet est de : "+this.temps_trajet+" et l'heure d'arrivee :"+this.heure_arrivee+"h"+this.minutes_arrivee);
 };
 Donnees.prototype.cout=function()
@@ -309,15 +309,7 @@ Donnees.prototype.calculApiCarbon=function(){
 			break;
 	}
 	//console.log("empreinte",empreinte)
-	if(empreinte>1000){
-		empreinte=Math.round(empreinte/1000);
-
-		console.log("L'empreinte carbone de votre trajet :"+empreinte+" kilogrammes");
-	}
-	else{
-		console.log("L'empreinte carbone de votre trajet :"+empreinte+" grammes");
-	}
-	this.empreinte=empreinte;
+	this.empreinte=(empreinte/1000).toFixed(2);//conversion en kilogrammes 2chiffres après la virgule
 }
 
 //fin implémentation Donnees
@@ -429,17 +421,52 @@ function send_t()
 		console.log(donnee_train)
 		console.log(donnee_bus)
 		makeDiagram(donnee_api,donnee_avion,donnee_train,donnee_bus);
+		makeTitle("h1","VOTRE BILAN CARBONE");
 }
 //Diagramme
 google.charts.load('current', {'packages':['bar']});
-function makeDiagram(donnee_choisie,donnee_2,donnee_3,donnee_4) {        //Le constructeur reçoit un tableau des donnees à traiter en entrée
-  drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4)
+function makeDiagram(donnee_choisie,donnee_2,donnee_3,donnee_4) {
+	var unite=[];
+if(donnee_choisie.cout<1 && donnee_2.cout<1 && donnee_3.cout<1 && donnee_4.cout<1)
+{
+	donnee_choisie.cout=donnee_choisie.cout*100;//conversion du cout en centimes si le cout est inferieur à 1 euro
+	donnee_2.cout=donnee_2.cout*100;
+	donnee_3.cout=donnee_3.cout*100;
+	donnee_4.cout=donnee_4.cout*100;
+	unite[0]="centimes"
+}        //Le constructeur reçoit un tableau des donnees à traiter en entrée
+else{
+	unite[0]="euros";
+}
+if(donnee_choisie.empreinte<1 && donnee_2.empreinte<1 && donnee_3.empreinte<1 && donnee_4.empreinte<1)
+{
+	donnee_choisie.empreinte=donnee_choisie.empreinte*1000;//converion en grammes si l'empreinte carbone est inférieure à 1 kilogramme
+	donnee_2.empreinte=donnee_2.empreinte*1000;
+	donnee_3.empreinte=donnee_3.empreinte*1000;
+	donnee_4.empreinte=donnee_4.empreinte*1000;
+	unite[1]="grammes"
+}  
+else{
+	unite[1]="kilogrammes";
+}
+if(donnee_choisie.temps_trajet<1 && donnee_2.temps_trajet<1 && donnee_3.temps_trajet<1 && donnee_4.temps_trajet<1)
+{
+	donnee_choisie.temps_trajet=donnee_choisie.temps_trajet*60;//conversion en minutes si le trajet dure moins d'une heure
+	donnee_2.temps_trajet=donnee_2.temps_trajet*60;
+	donnee_3.temps_trajet=donnee_3.temps_trajet*60;
+	donnee_4.temps_trajet=donnee_4.temps_trajet*60;
+	unite[2]="minutes"
+}
+else{
+	unite[2]="heures";
+}
+  drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4,unite)
 }
 
 
-function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4) {
+function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4,unite) {
   var data = google.visualization.arrayToDataTable([
-    ['Vehicule', 'Coût', 'Empreinte Carbone', 'Temps'],
+    ['Vehicule', 'Coût en '+unite[0], 'Empreinte Carbone en '+unite[1], 'Temps en '+unite[2]],
     [donnee_choisie.moyen_locomotion, donnee_choisie.cout, donnee_choisie.empreinte, donnee_choisie.temps_trajet],
     [donnee_2.moyen_locomotion, donnee_2.cout, donnee_2.empreinte, donnee_2.temps_trajet],
     [donnee_3.moyen_locomotion, donnee_3.cout, donnee_3.empreinte, donnee_3.temps_trajet],
@@ -450,10 +477,30 @@ function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4) {
       title: 'Company Performance',
       subtitle: 'Sales, Expenses, and Profit: 2014-2017',
     },
-    bars: 'horizontal' // Required for Material Bar Charts.
+    bars: 'horizontal', // Required for Material Bar Charts.
+    series: {
+    	2:{axis : 'Temps'},
+    	1:{ axis: 'Coût'}
+    },
+    axes: {
+    	x: {
+    		Temps:{side:'top', label:'Temps'},
+    		Coût:{label:'Coût/Empreinte Carbone'}
+    	}
+    }
   };
   var chart = new google.charts.Bar(document.getElementById('barchart_material'));
   chart.draw(data, google.charts.Bar.convertOptions(options));
 }
 //Diagramme
+//Enregistrement en PF
+window.printDiv = function(divName) {
+     var printContents = document.getElementById(divName).innerHTML;
+     var originalContents = document.body.innerHTML;
 
+     document.body.innerHTML = printContents;
+
+     window.print();
+
+     document.body.innerHTML = originalContents;
+}
