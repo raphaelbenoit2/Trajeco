@@ -101,6 +101,14 @@ nav
 	z-index: 1;
 	border-radius: 20px;
 }
+#resume{
+	width: 50%;
+    height: 500px;
+	margin-top: 100px;
+	margin-right: 200px;
+	border-radius: 20px;
+		border : 2px solid;
+}
 footer{
 	display: flex;
 
