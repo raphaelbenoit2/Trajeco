@@ -178,9 +178,15 @@ function Donnees(donnees) {				//Le constructeur reçoit un tableau des donnees 
 	this.heure=donnees[5];
 }
 //Méthodes de l'objet prototype de Donnees
-Donnees.prototype.calculApiKilometrage=function(distance){
-	console.log("nombre de kilomètres : "+Math.round(distance));
-	this.distance=Math.round(distance);
+Donnees.prototype.calculApiKilometrage=function(distance,distance_oiseau){
+	
+	if(this.moyen_locomotion=="voiture" | this.moyen_locomotion=="bus"){
+		this.distance=Math.round(distance);
+	}
+	else{
+		this.distance=Math.round(distance_oiseau);
+	}
+	console.log("nombre de kilomètres : "+this.distance);
 };
 Donnees.prototype.calculApiHArrivee=function(temps_trajet)
 {
@@ -324,15 +330,7 @@ function Texte(police,couleur,texte,taille_police,typet){
 }
 
 //Texte
-//Diagramme
-function Diagram(donnees,type_diag){
-	moyen_locomotion=donnees[0];
-	cout=donnees[1];
-	empreinte=donnees[2];
-	temps=donnes[3];
-	type=type_diag;
-}
-//Diagramme
+
 
 
 
@@ -390,87 +388,100 @@ function send_t()
         //console.log(donnee_traitee)
         //MOYEN CHOISI
         var donnee_api = new Donnees(donnee_traitee);
-		donnee_api.calculApiKilometrage(distance);//distance
+		donnee_api.calculApiKilometrage(distance_avion,distance);//distance
 		temps_trajet=[time_heures,time_minutes];//temps du trajet récupéré de l'api
 		donnee_api.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
 		donnee_api.cout();
 		donnee_api.calculApiCarbon();
-		console.log(distance_avion)
+		var moyen_locomotion=["voiture","avion","train","bus"]
+		var donnees_diagram=[];
+		for(i in moyen_locomotion){
+			if(moyen_locomotion[i]!=donnee_api.moyen_locomotion){
+				donnee_traitee[0]=moyen_locomotion[i];
+				donnees_diagram.push(new Donnees(donnee_traitee));
+			}
+		}
+		for(i in donnees_diagram){
+				donnees_diagram[i].calculApiKilometrage(distance_avion,distance);//distance
+				donnees_diagram[i].calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
+				donnees_diagram[i].cout();
+				donnees_diagram[i].calculApiCarbon();
+		}
 		//AVION
-		donnee_traitee[0]="avion";
-		donnee_avion=new Donnees(donnee_traitee);
-		donnee_avion.calculApiKilometrage(distance_avion);//distance
+		/*donnee_traitee[0]="avion";
+		var donnee_avion=new Donnees(donnee_traitee);
+		donnee_avion.calculApiKilometrage();//distance
 		donnee_avion.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
 		donnee_avion.cout();
 		donnee_avion.calculApiCarbon();
 		//train
 		donnee_traitee[0]="train";
-		donnee_train=new Donnees(donnee_traitee);
-		donnee_train.calculApiKilometrage(distance_avion);//distance
+		var donnee_train=new Donnees(donnee_traitee);
+		donnee_train.calculApiKilometrage();//distance
 		donnee_train.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
 		donnee_train.cout();
 		donnee_train.calculApiCarbon();
 		//Bus
 		donnee_traitee[0]="bus";
-		donnee_bus=new Donnees(donnee_traitee);
+		var donnee_bus=new Donnees();
 		donnee_bus.calculApiKilometrage(distance);//distance
 		donnee_bus.calculApiHArrivee(temps_trajet);//Determiner le jour et l'heure d'arrivée
 		donnee_bus.cout();
 		donnee_bus.calculApiCarbon();
 		console.log(donnee_avion)
 		console.log(donnee_train)
-		console.log(donnee_bus)
-		makeDiagram(donnee_api,donnee_avion,donnee_train,donnee_bus);
-		makeTitle("h1","VOTRE BILAN CARBONE");
+		console.log(donnee_bus)*/
+		makeDiagram(donnee_api,donnees_diagram);
+		//makeTitle("h1","VOTRE BILAN CARBONE");
 }
 //Diagramme
 google.charts.load('current', {'packages':['bar']});
-function makeDiagram(donnee_choisie,donnee_2,donnee_3,donnee_4) {
+function makeDiagram(donnees,donnees_diagram) {
 	var unite=[];
-if(donnee_choisie.cout<1 && donnee_2.cout<1 && donnee_3.cout<1 && donnee_4.cout<1)
+if(donnees_diagram[0].cout<1 && donnees.cout<1 && donnees_diagram[1].cout<1 && donnees_diagram[2].cout<1)
 {
-	donnee_choisie.cout=donnee_choisie.cout*100;//conversion du cout en centimes si le cout est inferieur à 1 euro
-	donnee_2.cout=donnee_2.cout*100;
-	donnee_3.cout=donnee_3.cout*100;
-	donnee_4.cout=donnee_4.cout*100;
+	donnees.cout=donnees.cout*100;//conversion du cout en centimes si le cout est inferieur à 1 euro
+	donnees_diagram[0].cout=donnees_diagram[0].cout*100;
+	donnees_diagram[1].cout=donnees_diagram[1].cout*100;
+	donnees_diagram[2].cout=donnees_diagram[2].cout*100;
 	unite[0]="centimes"
-}        //Le constructeur reçoit un tableau des donnees à traiter en entrée
+}        //Le constructeur reçoit un tableau des donneesà traiter en entrée
 else{
 	unite[0]="euros";
 }
-if(donnee_choisie.empreinte<1 && donnee_2.empreinte<1 && donnee_3.empreinte<1 && donnee_4.empreinte<1)
+if(donnees.empreinte<1 && donnees_diagram[0].empreinte<1 && donnees_diagram[1].empreinte<1 && donnees_diagram[2].empreinte<1)
 {
-	donnee_choisie.empreinte=donnee_choisie.empreinte*1000;//converion en grammes si l'empreinte carbone est inférieure à 1 kilogramme
-	donnee_2.empreinte=donnee_2.empreinte*1000;
-	donnee_3.empreinte=donnee_3.empreinte*1000;
-	donnee_4.empreinte=donnee_4.empreinte*1000;
+	donnees.empreinte=donnees.empreinte*1000;//converion en grammes si l'empreinte carbone est inférieure à 1 kilogramme
+	donnees_diagram[0].empreinte=donnees_diagram[0].empreinte*1000;
+	donnees_diagram[1].empreinte=donnees_diagram[1].empreinte*1000;
+	donnees_diagram[2].empreinte=donnees_diagram[2].empreinte*1000;
 	unite[1]="grammes"
 }  
 else{
 	unite[1]="kilogrammes";
 }
-if(donnee_choisie.temps_trajet<1 && donnee_2.temps_trajet<1 && donnee_3.temps_trajet<1 && donnee_4.temps_trajet<1)
+if(donnees.temps_trajet<1 && donnees_diagram[0].temps_trajet<1 && donnees_diagram[1].temps_trajet<1 && donnees_diagram[2].temps_trajet<1)
 {
-	donnee_choisie.temps_trajet=donnee_choisie.temps_trajet*60;//conversion en minutes si le trajet dure moins d'une heure
-	donnee_2.temps_trajet=donnee_2.temps_trajet*60;
-	donnee_3.temps_trajet=donnee_3.temps_trajet*60;
-	donnee_4.temps_trajet=donnee_4.temps_trajet*60;
+	donnees.temps_trajet=donnees.temps_trajet*60;//conversion en minutes si le trajet dure moins d'une heure
+	donnees_diagram[0].temps_trajet=donnees_diagram[0].temps_trajet*60;
+	donnees_diagram[1].temps_trajet=donnees_diagram[1].temps_trajet*60;
+	donnees_diagram[2].temps_trajet=donnees_diagram[2].temps_trajet*60;
 	unite[2]="minutes"
 }
 else{
 	unite[2]="heures";
 }
-  drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4,unite)
+  drawChart(donnees,donnees_diagram,unite	)
 }
 
 
-function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4,unite) {
+function drawChart(donnees,donnees_diagram,unite) {
   var data = google.visualization.arrayToDataTable([
     ['Vehicule', 'Coût en '+unite[0], 'Empreinte Carbone en '+unite[1], 'Temps en '+unite[2]],
-    [donnee_choisie.moyen_locomotion, donnee_choisie.cout, donnee_choisie.empreinte, donnee_choisie.temps_trajet],
-    [donnee_2.moyen_locomotion, donnee_2.cout, donnee_2.empreinte, donnee_2.temps_trajet],
-    [donnee_3.moyen_locomotion, donnee_3.cout, donnee_3.empreinte, donnee_3.temps_trajet],
-    [donnee_4.moyen_locomotion, donnee_4.cout, donnee_4.empreinte, donnee_4.temps_trajet]
+    [donnees.moyen_locomotion, donnees.cout, donnees.empreinte, donnees.temps_trajet],
+    [donnees_diagram[0].moyen_locomotion, donnees_diagram[0].cout, donnees_diagram[0].empreinte, donnees_diagram[0].temps_trajet],
+    [donnees_diagram[1].moyen_locomotion, donnees_diagram[1].cout, donnees_diagram[1].empreinte, donnees_diagram[1].temps_trajet],
+    [donnees_diagram[2].moyen_locomotion, donnees_diagram[2].cout, donnees_diagram[2].empreinte, donnees_diagram[2].temps_trajet]
   ]);
   var options = {
     chart: {
@@ -497,10 +508,8 @@ function drawChart(donnee_choisie,donnee_2,donnee_3,donnee_4,unite) {
 window.printDiv = function(divName) {
      var printContents = document.getElementById(divName).innerHTML;
      var originalContents = document.body.innerHTML;
-
      document.body.innerHTML = printContents;
-
      window.print();
-
      document.body.innerHTML = originalContents;
 }
+//Enregistrement en PF
