@@ -5,6 +5,7 @@ body.waiting *
 }
 body {
   background: linear-gradient(to bottom right, #5533ff, #38e2ee);
+	background: white;
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -45,7 +46,7 @@ header
 	top: 0px;
 	right:0px;
 	background: url("images/logo_enib_png_mini.png") top 20px left 1% no-repeat, url("images/trajeco.png") top -5px right 50px no-repeat black;
-	z-index: 2;
+	z-index: 3;
 }
 nav
 { 	
@@ -88,7 +89,7 @@ nav
 }
 
 
-#map{
+#mapx{
     width: 50%;
     height: 500px;
 	  margin-top: 100px;
@@ -101,7 +102,278 @@ nav
 	z-index: 1;
 	border-radius: 20px;
 }
-footer{
+
+#fiche
+{
+
+}
+#pdf
+{
+	display: none;
+	position: absolute;
+}
+#barchart_material
+{
+	width: 170em;
+	height: 40em;
+	position: relative;
+  left:20em
+}
+#temperature{
+  position: relative;
+	width:37em;
+	height: 30em;
+}
+#title{
+  position: absolute;
+	top: 0.5em;
+	left: 1em;
+	width: 15em;
+	z-index: 2;
+	font-size: 1.75em;
+	color: brown;
+	font-weight: bold;
+}
+#empreinte
+{
+	position: absolute;
+	font-size: 1.2em;
+	top: 10em;
+	left: 15em;
+	color: brown;
+	z-index: 2;
+}
+#empreinte_max
+{
+	position: absolute;
+	font-size: 1.2em;
+	top: 6em;
+	left: 1.1em;
+	color: brown;
+	z-index: 2;
+}
+#empreinte_min
+{
+	position: absolute;
+	font-size: 1.2em;
+	top: 16em;
+	left: 1.1em;
+	color: brown;
+	z-index: 2;
+}
+#img_temp{
+  position: absolute;
+	height: 30em;
+	width: 30em;
+	z-index: 1;
+	border-bottom: 3px solid grey;
+	border-right: 2px dashed grey;
+	border-radius: 20px 0px 0px 0px;
+	
+}
+
+.chiffre
+{
+	font-size: 2em;
+}
+/*2eme partie fiche*/
+
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border: 4px silver;
+  -ms-box-orient: horizontal;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -moz-flex;
+  display: -webkit-flex;
+  display: flex;
+	background: white;
+	flex-direction: row;
+	
+}
+
+.kilometre  { 
+  -webkit-flex-wrap: nowrap;
+  flex-wrap: nowrap;
+}
+
+.cout    { 
+  //-webkit-flex-wrap: wrap;
+  flex-wrap: wrap;
+}  
+.cout li {
+  background: gold;
+}
+
+.nb_personne         { 
+  -webkit-flex-wrap: wrap-reverse;
+  flex-wrap: wrap-reverse;
+	border-radius: 0px 0px 0px 20px;
+}  
+.nb_personne li {
+  background: deepskyblue;
+}
+
+.flex-item {
+  background: tomato;
+  padding: 0.1px;
+  width: 20px;
+  height: 60px;
+  margin: 3.3px;
+  
+  line-height: 100px;
+  color: black;
+  font-weight: bold;
+  font-size: 2em;
+  text-align: center;
+	border-radius: 5px;
+}
+
+#resume
+{
+	position: relative;
+	width: 30em;
+	height: 20.2em;
+	top:31em;
+	left: -89.9em;
+	border-right: 2px dashed grey;
+	border-bottom: 3px solid grey;
+	border-radius: 0px 0px 0px 20px;
+}
+#trajet{
 	display: flex;
+	position: relative;
+	left:30em;
+	top:-11.1em;
+	width: 90em;
+	height: 11em;
+	border-left:  2px dashed grey;
+	border-top: 3px solid grey;
+	border-bottom: 3px solid grey;
+	border-radius: 0px 0px 20px 0px;
+}
+.marqueur{
+	width: 10em;
+  	height: 10em;
+	
+}
+.chemin{
+	width: 41em;
+  height: 11em;
+	
+}
+#marqueurbleu
+{
+	width: 10em;
+  height: 10em;
+	position: absolute;
+  right: 2em;
+}
+#marqueurnoir
+{
+	width: 20em;
+  height: 10em;
+	position: absolute;
+
+}
+#chemin	
+{
+	width: 41em;
+  height: 11em;
+	position: absolute;
+	left: 24em;
+
+}
+.kilometres_resume
+{
+	width: 6em;
+  height: 30px;
+	position: absolute;
+	left: 10em;
+	top: 1.5em;
+	font-family: "Lucida Console", Courier, monospace;
+	font-size: 18px;
+	
+}
+#prix
+{
+	width: 6em;
+  height: 30px;
+	position: absolute;
+	left: 10em;
+	top: 9em;
+	font-family: "Lucida Console", Courier, monospace;
+	font-size: 18px;
+	
+}
+.passagers
+{
+	width: 6em;
+  height: 30px;
+	position: absolute;
+	left: 10em;
+	top: 5em;
+	font-family: "Lucida Console", Courier, monospace;
+	font-size: 18px;
+	
+}
+
+#depart
+{
+	width: 150px;
+  height: 30px;
+	position: absolute;
+	left: 39em;
+	top: 11em;
+	color:black;
+}
+#arrivee
+{
+	width: 150px;
+  height: 30px;
+	margin-top: 100px;
+	margin-right: 200px;
+	position: absolute;
+	color:#0da0cb;
+	left: 94em;
+	top: 2em;
+
+}
+#heure_dep
+{
+	width: 150px;
+  height: 30px;
+	margin-top: 100px;
+	margin-right: 200px;
+	position: absolute;
+	left: 57em;
+	top: 2.8em;
+  color: brown;
+}
+#heure_arr
+{
+
+	width: 150px;
+  height: 30px;
+	margin-top: 100px;
+	margin-right: 200px;
+	position: absolute;
+	left:85em;
+	top: 3em;
+  color:brown;
+}
+#tps_trajet
+{
+	width: 150px;
+  height: 30px;
+	margin-top: 100px;
+	margin-right: 200px;
+	position: absolute;
+	left: 72em;
+	top: 3em;
+	color:#fd7700;
 
 }
