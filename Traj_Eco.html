@@ -45,7 +45,6 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-
 </head>
 <body >
 	<header>
@@ -80,10 +79,10 @@
 				<form name="loc">
 					<p>
 					<br>Moyen de locomotion :</br>
-						 <input type="checkbox" name="voiture" id="voiture" /><label for="voiture">voiture</label></br>
-						 <input type="checkbox" name="avion" id="avion" /><label for="avion">avion</label></br>
-						 <input type="checkbox" name="train" id="train" /><label for="train">train</label></br>
-						 <input type="checkbox" name="bus" id="bus" /><label for="bus">bus</label></br>
+						 <input type="radio" name="vehicule" id="voiture" /><label for="voiture">voiture</label></br>
+						 <input type="radio" name="vehicule" id="avion" /><label for="avion">avion</label></br>
+						 <input type="radio" name="vehicule" id="train" /><label for="train">train</label></br>
+						 <input type="radio" name="vehicule" id="bus" /><label for="bus">bus</label></br>
 					</p>
 				</form>
 				<form>
@@ -107,9 +106,7 @@
 			</div>
 		</section>
 	</section>
-	<div id="fiche" >
-		
-	</div>
-	<input type="button" id="pdf"onclick="printDiv('barchart_material')" value="Enregistrer en PDF" />
+	<div id="fiche" ></div>
+	<div id="bouton_pdf"></div>
 </body>
 </html>

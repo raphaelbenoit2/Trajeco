@@ -3,7 +3,7 @@
 
 
 
-var points = ["31 rue du rempart Brest"];
+var points = ["945 Avenue du Technopôle, 29280 Plouzané"];
 var pointsLat = new Array();
 var pointsLng = new Array();
 var latView;
@@ -385,7 +385,7 @@ function send_t()
 		let donnee_traitee = new Array();
 		for (let i=0;i<donnee_locomotion.length;i++){
 			if(donnee_locomotion[i].checked){
-				donnee_traitee.push(donnee_locomotion[i].name);
+				donnee_traitee.push(donnee_locomotion[i].id);
 			}
 		}
 		for(let i=0;i<2;i++)
@@ -431,6 +431,8 @@ function send_t()
 }
 function addFiche()
 {
+	var button_pdf=document.getElementById("bouton_pdf");
+	button_pdf.innerHTML="<input type='button' id='pdf' class='btn' onclick=printDiv('fiche') value='Enregistrer en PDF' />"
 	var fiche=document.getElementById("fiche");
 	fiche.style.display= "flex";
 	fiche.style.marginLeft="10em";
@@ -568,7 +570,9 @@ function makeTemperature(donnee_choisie,donnees_restantes,unite)
 window.printDiv = function(divName) {
      var printContents = document.getElementById(divName).innerHTML;
      var originalContents = document.body.innerHTML;
-     document.body.innerHTML = printContents;
+     console.log(originalContents);
+     console.log(printContents) 
+     //document.body.innerHTML = printContents;
      window.print();
      document.body.innerHTML = originalContents;
 }
@@ -598,8 +602,8 @@ function drawCities(depart,arrivee,heure_dep,heure_arr,minutes_arr,tps_trajet,un
 	document.getElementById('depart').innerHTML = "Ville de départ <br> <br>"+ depart;
 	document.getElementById('arrivee').innerHTML = "Ville d'arrivée <br> <br> "+ arrivee;
 	document.getElementById('heure_dep').innerHTML = "Heure de départ <br> <br>"+ heure_dep;
-	document.getElementById('heure_arr').innerHTML = "Heure d'arrivée <br> <br>" + heure_arr +" h "+minutes_arr; 
-	document.getElementById('tps_trajet').innerHTML = "Votre trajet dure <br> <br>"+tps_trajet+" "+unite[2];
+	document.getElementById('heure_arr').innerHTML = "Heure d'arrivée <br> <br>" + heure_arr +":"+minutes_arr; 
+	document.getElementById('tps_trajet').innerHTML = "Votre trajet dure <br> <br>"+Math.round(tps_trajet)+" "+unite[2];
 
 }
 

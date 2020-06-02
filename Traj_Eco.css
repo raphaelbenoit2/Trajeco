@@ -4,8 +4,7 @@ body.waiting *
     cursor: progress;
 }
 body {
-  background: linear-gradient(to bottom right, #5533ff, #38e2ee);
-	background: white;
+  background: white;
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -103,14 +102,12 @@ nav
 	border-radius: 20px;
 }
 
-#fiche
-{
-
-}
 #pdf
 {
-	display: none;
 	position: absolute;
+  left:60em;
+	width: 20em;
+	z-index: 3;
 }
 #barchart_material
 {
@@ -304,7 +301,7 @@ nav
   height: 30px;
 	position: absolute;
 	left: 10em;
-	top: 9em;
+	top: 5em;
 	font-family: "Lucida Console", Courier, monospace;
 	font-size: 18px;
 	
@@ -315,7 +312,7 @@ nav
   height: 30px;
 	position: absolute;
 	left: 10em;
-	top: 5em;
+	top: 9em;
 	font-family: "Lucida Console", Courier, monospace;
 	font-size: 18px;
 	
