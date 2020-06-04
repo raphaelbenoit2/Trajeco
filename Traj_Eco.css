@@ -3,8 +3,8 @@ body.waiting *
 {
     cursor: progress;
 }
-body {
-  background: white;
+ body {
+  background: linear-gradient(to bottom right, #5533ff, #38e2ee);
   background-size: cover;
   background-repeat: no-repeat;
   min-height: 100vh;
@@ -74,7 +74,7 @@ nav
 	width: 50%;
 	height:500px;
 	margin-top: 100px;
-	background : orange;
+	background : linear-gradient(to bottom right, #F1C470, #FBD7BB);
 	border-radius: 20px;
 	border : 2px solid;
 }
