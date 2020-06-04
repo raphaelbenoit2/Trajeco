@@ -16,7 +16,7 @@ To test this project there is no need of any software except your navigator like
 
 ## Installing
 
-Now you got the token, you can add it in the ***Test.js*** file. You will see a line with the variable : **mapboxgl.accessToken="Your Token"**. 
+Now you got the token, you can add it in the ***Script.js*** file. You will see a line with the variable : **mapboxgl.accessToken="Your Token"**. 
 
 ## Running problems
 During your test you could have a **Routing Error** in your navigator console. This error could be due to the **Leaflet Routing Machine**. Please consult their [website](https://www.liedman.net/leaflet-routing-machine/).
