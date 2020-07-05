@@ -18,7 +18,7 @@ var start;
 var end;
 var distance;
 
-mapboxgl.accessToken = 'xxxx';// token de l'api mapbox
+mapboxgl.accessToken = 'Your Token';// token de l'api mapbox
 
           
 function appelAjax(point)// requête ajax vers l'api
