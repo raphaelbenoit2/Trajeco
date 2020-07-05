@@ -18,7 +18,7 @@ var start;
 var end;
 var distance;
 
-mapboxgl.accessToken = 'pk.eyJ1IjoicmFwaGFlbHRyYWplY28iLCJhIjoiY2thd2l1NDR3MGx6cjJ4cGMyNjcyZjZmMiJ9.EviGcKDG4q_1NdvHJhP0Yw';// token de l'api mapbox
+mapboxgl.accessToken = 'xxxx';// token de l'api mapbox
 
           
 function appelAjax(point)// requête ajax vers l'api
